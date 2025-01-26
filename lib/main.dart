@@ -1,30 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nes_kanban_app/features/auth/signin_screen.dart';
+import 'package:nes_ui/nes_ui.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-final helloWorldProvider = Provider((_) => 'Hello world');
+final sharedPrefsProvider = Provider<SharedPreferencesWithCache>((ref) {
+  throw UnimplementedError();
+});
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final SharedPreferencesWithCache prefs =
+      await SharedPreferencesWithCache.create(
+    cacheOptions: const SharedPreferencesWithCacheOptions(),
+  );
+
   runApp(
     ProviderScope(
+      overrides: [sharedPrefsProvider.overrideWithValue(prefs)],
       child: MyApp(),
     ),
   );
 }
 
-class MyApp extends ConsumerWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final String value = ref.watch(helloWorldProvider);
-
+  Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: const Text('Example')),
-        body: Center(
-          child: Text(value),
+      theme: flutterNesTheme(
+        brightness: Brightness.dark,
+        nesTheme: const NesTheme(
+          pixelSize: 2,
         ),
       ),
+      home: SigninScreen(),
     );
   }
 }

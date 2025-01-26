@@ -14,14 +14,21 @@ dependencies:
   cupertino_icons: ^1.0.8
   nes_ui: ^0.21.0
   flutter_riverpod: ^2.6.1
+  chopper: ^8.0.4
+  dev: ^1.0.0
+  json_annotation: ^4.9.0
+  shared_preferences: ^2.4.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  chopper_generator: ^8.0.4
+  build_runner: ^2.4.14
   flutter_lints: ^5.0.0
   custom_lint: ^0.7.1
   riverpod_lint: ^2.6.4
+  json_serializable: ^6.9.3
 
 flutter:
   uses-material-design: true
