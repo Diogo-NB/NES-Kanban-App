@@ -6,9 +6,11 @@ import 'package:nes_kanban_app/features/auth/auth_repository.dart';
 class SigninScreenState {
   final bool isPasswordVisible;
   final String? username, password;
+  final AsyncValue<String?> signinState;
 
   const SigninScreenState({
     this.isPasswordVisible = false,
+    this.signinState = const AsyncValue.data(null),
     this.username,
     this.password,
   });
@@ -17,11 +19,13 @@ class SigninScreenState {
     bool? isPasswordVisible,
     String? username,
     String? password,
+    AsyncValue<String?>? signinState,
   }) {
     return SigninScreenState(
       isPasswordVisible: isPasswordVisible ?? this.isPasswordVisible,
       username: username ?? this.username,
       password: password ?? this.password,
+      signinState: signinState ?? this.signinState,
     );
   }
 }
@@ -47,14 +51,20 @@ class SigninScreenViewModel extends AutoDisposeNotifier<SigninScreenState> {
     );
   }
 
+  void reset() {
+    state = state.copyWith(signinState: const AsyncValue.data(null));
+  }
+
   Future<void> submit() async {
+    state = state.copyWith(signinState: const AsyncValue.loading());
     try {
       await _authRepository.signin(
         username: state.username!,
         password: state.password!,
       );
-    } catch (e) {
-      print(e);
+      state = state.copyWith(signinState: const AsyncValue.data(null));
+    } catch (e, s) {
+      state = state.copyWith(signinState: AsyncValue.error(e, s));
     }
   }
 }
