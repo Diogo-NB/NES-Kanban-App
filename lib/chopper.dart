@@ -21,7 +21,7 @@ abstract class ChopperDto {
 
 final chopperProvider = Provider<ChopperClient>((ref) {
   return ChopperClient(
-    baseUrl: Uri.parse('http://localhost:3000'),
+    baseUrl: Uri.parse(const String.fromEnvironment('API_URL')),
     services: [AuthService.create()],
     converter: ChopperDtoConverter(),
     errorConverter: JsonConverter(),
