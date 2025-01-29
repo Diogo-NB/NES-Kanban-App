@@ -1,6 +1,6 @@
 import 'package:chopper/chopper.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nes_kanban_app/features/auth/auth_service.dart';
+import 'package:nes_kanban_app/features/auth/data/auth_service.dart';
 
 class ChopperDtoConverter extends JsonConverter {
   @override

@@ -1,5 +1,5 @@
 import 'package:chopper/chopper.dart';
-import 'package:nes_kanban_app/features/auth/signin_dto.dart';
+import 'package:nes_kanban_app/features/auth/data/signin_dto.dart';
 
 part "auth_service.chopper.dart";
 

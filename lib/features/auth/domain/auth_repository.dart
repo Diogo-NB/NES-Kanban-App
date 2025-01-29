@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nes_kanban_app/chopper.dart';
-import 'package:nes_kanban_app/features/auth/auth_service.dart';
-import 'package:nes_kanban_app/features/auth/signin_dto.dart';
+import 'package:nes_kanban_app/features/auth/data/auth_service.dart';
+import 'package:nes_kanban_app/features/auth/data/signin_dto.dart';
 import 'package:nes_kanban_app/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

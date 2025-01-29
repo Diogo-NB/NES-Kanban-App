@@ -51,8 +51,10 @@ class SigninScreenViewModel extends AutoDisposeNotifier<SigninScreenState> {
     );
   }
 
-  void reset() {
-    state = state.copyWith(signinState: const AsyncValue.data(null));
+  void resetErrorMessage() {
+    if (state.signinState.hasError) {
+      state = state.copyWith(signinState: const AsyncValue.data(null));
+    }
   }
 
   Future<void> submit() async {

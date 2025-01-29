@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_debouncer/flutter_debouncer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nes_kanban_app/features/auth/signin_viewmodel.dart';
+import 'package:nes_kanban_app/features/auth/presentation/signin_viewmodel.dart';
 import 'package:nes_ui/nes_ui.dart';
 
 class SigninScreen extends ConsumerWidget {
   SigninScreen({super.key});
 
-  final formKey = GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>(debugLabel: 'signin_screen_form');
   final debouncer = Debouncer();
 
   @override
@@ -116,7 +116,7 @@ class SigninScreen extends ConsumerWidget {
                           NesButton.text(
                             type: NesButtonType.normal,
                             onPressed: () {
-                              viewModel.reset();
+                              viewModel.resetErrorMessage();
                               if (formKey.currentState!.validate()) {
                                 debouncer.debounce(
                                   duration: Durations.medium2,
@@ -137,7 +137,8 @@ class SigninScreen extends ConsumerWidget {
                               Expanded(
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 10),
+                                    horizontal: 10,
+                                  ),
                                   child: NesContainer(height: 3),
                                 ),
                               ),
@@ -145,7 +146,8 @@ class SigninScreen extends ConsumerWidget {
                               Expanded(
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 10),
+                                    horizontal: 10,
+                                  ),
                                   child: NesContainer(height: 3),
                                 ),
                               ),
@@ -153,8 +155,8 @@ class SigninScreen extends ConsumerWidget {
                           ),
                           NesButton.text(
                             type: NesButtonType.normal,
-                            onPressed: () {},
                             text: 'Create an account',
+                            onPressed: () {},
                           ),
                         ],
                       ),
