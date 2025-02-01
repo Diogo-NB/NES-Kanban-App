@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nes_kanban_app/features/auth/auth_repository.dart';
+import 'package:nes_kanban_app/features/auth/domain/auth_repository.dart';
 
 @immutable
 class SigninScreenState {
@@ -72,6 +72,5 @@ class SigninScreenViewModel extends AutoDisposeNotifier<SigninScreenState> {
 }
 
 final signinScreenViewModel =
-    NotifierProvider.autoDispose<SigninScreenViewModel, SigninScreenState>(() {
-  return SigninScreenViewModel();
-});
+    NotifierProvider.autoDispose<SigninScreenViewModel, SigninScreenState>(
+        SigninScreenViewModel.new);
