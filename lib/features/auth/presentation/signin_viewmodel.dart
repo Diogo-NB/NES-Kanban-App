@@ -1,34 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nes_kanban_app/features/auth/domain/auth_repository.dart';
-
-@immutable
-class SigninScreenState {
-  final bool isPasswordVisible;
-  final String? username, password;
-  final AsyncValue<String?> signinState;
-
-  const SigninScreenState({
-    this.isPasswordVisible = false,
-    this.signinState = const AsyncValue.data(null),
-    this.username,
-    this.password,
-  });
-
-  SigninScreenState copyWith({
-    bool? isPasswordVisible,
-    String? username,
-    String? password,
-    AsyncValue<String?>? signinState,
-  }) {
-    return SigninScreenState(
-      isPasswordVisible: isPasswordVisible ?? this.isPasswordVisible,
-      username: username ?? this.username,
-      password: password ?? this.password,
-      signinState: signinState ?? this.signinState,
-    );
-  }
-}
+import 'package:nes_kanban_app/features/auth/presentation/signin_screen_state.dart';
 
 class SigninScreenViewModel extends AutoDisposeNotifier<SigninScreenState> {
   late final AuthRepository _authRepository;
@@ -44,11 +16,12 @@ class SigninScreenViewModel extends AutoDisposeNotifier<SigninScreenState> {
     state = state.copyWith(isPasswordVisible: !state.isPasswordVisible);
   }
 
-  void saveFields({String? username, String? password}) {
-    state = state.copyWith(
-      username: username,
-      password: password,
-    );
+  void saveEmail(String? email) {
+    state = state.copyWith(email: email);
+  }
+
+  void savePassword(String? password) {
+    state = state.copyWith(password: password);
   }
 
   void resetErrorMessage() {
@@ -61,7 +34,7 @@ class SigninScreenViewModel extends AutoDisposeNotifier<SigninScreenState> {
     state = state.copyWith(signinState: const AsyncValue.loading());
     try {
       await _authRepository.signin(
-        username: state.username!,
+        email: state.email!,
         password: state.password!,
       );
       state = state.copyWith(signinState: const AsyncValue.data(null));

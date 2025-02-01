@@ -1,13 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nes_kanban_app/chopper.dart';
 import 'package:nes_kanban_app/features/auth/data/auth_service.dart';
-import 'package:nes_kanban_app/features/auth/data/signin_dto.dart';
 import 'package:nes_kanban_app/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepository(
-    service: ref.read(chopperProvider).getService<AuthService>(),
+    service: AuthService(),
     prefs: ref.read(sharedPrefsProvider),
   );
 });
@@ -23,26 +22,25 @@ class AuthRepository {
         _prefs = prefs;
 
   Future<String> signin({
-    required String username,
+    required String email,
     required String password,
   }) async {
-    final response = await _service.signin(SignInDto(
-      username: username,
-      password: password,
-    ));
+    try {
+      await _service.signin(
+        email: email,
+        password: password,
+      );
 
-    if (response.statusCode == 401 || response.statusCode == 404) {
-      throw ArgumentError('Invalid username or password');
+      final token = await _service.getToken();
+
+      if (token == null) {
+        throw Exception('Failed to get token');
+      }
+
+      return token;
+    } on FirebaseAuthException catch (e) {
+      print('FirebaseAuthException: ${(e.code, e.message)}');
+      rethrow;
     }
-
-    if (response.statusCode != 200) {
-      throw Exception('Failed to sign in');
-    }
-
-    final token = response.body['access_token'];
-
-    await _prefs.setString('jwt', token);
-
-    return token;
   }
 }

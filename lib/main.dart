@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nes_kanban_app/features/auth/presentation/signin_screen.dart';
 import 'package:nes_ui/nes_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 final sharedPrefsProvider = Provider<SharedPreferencesWithCache>((ref) {
   throw UnimplementedError();
@@ -10,6 +12,10 @@ final sharedPrefsProvider = Provider<SharedPreferencesWithCache>((ref) {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   final SharedPreferencesWithCache prefs =
       await SharedPreferencesWithCache.create(

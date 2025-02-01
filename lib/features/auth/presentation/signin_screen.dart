@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_debouncer/flutter_debouncer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -41,25 +42,26 @@ class SigninScreen extends ConsumerWidget {
                       ),
                       SizedBox(height: screenHeight * 0.1),
                       TextFormField(
-                        decoration: const InputDecoration(
-                          labelText: 'Username',
-                        ),
+                        autofillHints: const [AutofillHints.email],
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: const InputDecoration(labelText: 'Email'),
+                        style: const TextStyle(fontSize: 12),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Enter your username';
+                            return 'Enter your email';
                           }
                           return null;
                         },
-                        onSaved: (value) {
-                          viewModel.saveFields(username: value);
-                        },
+                        onSaved: viewModel.saveEmail,
                       ),
                       const SizedBox(height: 20),
                       TextFormField(
+                        autofillHints: const [AutofillHints.password],
+                        obscureText: !state.isPasswordVisible,
                         keyboardType: state.isPasswordVisible
                             ? TextInputType.visiblePassword
                             : null,
-                        autofillHints: const [AutofillHints.password],
+                        style: const TextStyle(fontSize: 12),
                         decoration: InputDecoration(
                           labelText: 'Password',
                           suffixIcon: IconButton(
@@ -71,16 +73,13 @@ class SigninScreen extends ConsumerWidget {
                             onPressed: viewModel.togglePasswordVisibility,
                           ),
                         ),
-                        obscureText: !state.isPasswordVisible,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Enter your password';
                           }
                           return null;
                         },
-                        onSaved: (value) {
-                          viewModel.saveFields(password: value);
-                        },
+                        onSaved: viewModel.savePassword,
                       ),
                       Align(
                         alignment: Alignment.centerRight,
@@ -99,8 +98,8 @@ class SigninScreen extends ConsumerWidget {
                         data: (_) => const SizedBox.shrink(),
                         loading: () => const NesTerminalLoadingIndicator(),
                         error: (e, s) => Text(
-                          e is ArgumentError
-                              ? e.message
+                          e is FirebaseAuthException
+                              ? e.message!
                               : 'Failed to sign in. Please try again.',
                           style: const TextStyle(
                             color: Colors.red,
