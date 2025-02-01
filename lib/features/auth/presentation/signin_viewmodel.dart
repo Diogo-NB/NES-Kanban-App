@@ -32,15 +32,16 @@ class SigninScreenViewModel extends AutoDisposeNotifier<SigninScreenState> {
 
   Future<void> submit() async {
     state = state.copyWith(signinState: const AsyncValue.loading());
-    try {
-      await _authRepository.signin(
-        email: state.email!,
-        password: state.password!,
-      );
-      state = state.copyWith(signinState: const AsyncValue.data(null));
-    } catch (e, s) {
-      state = state.copyWith(signinState: AsyncValue.error(e, s));
-    }
+    final result = await _authRepository.signin(
+      email: state.email!,
+      password: state.password!,
+    );
+
+    state = state.copyWith(
+      signinState: result == null
+          ? AsyncValue.data(result)
+          : AsyncValue.error(result, StackTrace.current),
+    );
   }
 }
 

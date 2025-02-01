@@ -21,7 +21,7 @@ class AuthRepository {
   })  : _service = service,
         _prefs = prefs;
 
-  Future<String> signin({
+  Future<String?> signin({
     required String email,
     required String password,
   }) async {
@@ -37,10 +37,30 @@ class AuthRepository {
         throw Exception('Failed to get token');
       }
 
-      return token;
+      _prefs.setString('token', token);
+
+      return null;
     } on FirebaseAuthException catch (e) {
-      print('FirebaseAuthException: ${(e.code, e.message)}');
-      rethrow;
+      return _handleAuthError(e);
+    } catch (e) {
+      return 'Authentication failed. Please try again.';
     }
+  }
+}
+
+String _handleAuthError(FirebaseAuthException e) {
+  switch (e.code) {
+    case 'invalid-email':
+      return 'Invalid email address';
+    case 'user-not-found':
+      return 'No user found with this email';
+    case 'wrong-password':
+      return 'Incorrect password';
+    case 'user-disabled':
+      return 'This account has been disabled';
+    case 'invalid-credential':
+      return 'Invalid Email or Password';
+    default:
+      return 'Authentication failed. Please try again.';
   }
 }

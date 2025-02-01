@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nes_kanban_app/tasks_list.dart';
+import 'package:nes_kanban_app/features/home/presentation/components/tasks_list.dart';
 import 'package:nes_ui/nes_ui.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -25,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen>
     ),
   ];
 
-  late TabController _tabController;
+  late final TabController _tabController;
 
   @override
   void initState() {

@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_debouncer/flutter_debouncer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -98,9 +97,7 @@ class SigninScreen extends ConsumerWidget {
                         data: (_) => const SizedBox.shrink(),
                         loading: () => const NesTerminalLoadingIndicator(),
                         error: (e, s) => Text(
-                          e is FirebaseAuthException
-                              ? e.message!
-                              : 'Failed to sign in. Please try again.',
+                          e.toString(),
                           style: const TextStyle(
                             color: Colors.red,
                             fontSize: 10,
