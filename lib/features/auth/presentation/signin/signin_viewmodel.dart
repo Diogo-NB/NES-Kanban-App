@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nes_kanban_app/features/auth/domain/auth_repository.dart';
-import 'package:nes_kanban_app/features/auth/presentation/signin_screen_state.dart';
+import 'package:nes_kanban_app/features/auth/presentation/signin/signin_screen_state.dart';
 
 class SigninScreenViewModel extends AutoDisposeNotifier<SigninScreenState> {
   late final AuthRepository _authRepository;
@@ -30,7 +30,7 @@ class SigninScreenViewModel extends AutoDisposeNotifier<SigninScreenState> {
     }
   }
 
-  Future<void> submit() async {
+  Future<bool> submit() async {
     state = state.copyWith(signinState: const AsyncValue.loading());
     final result = await _authRepository.signin(
       email: state.email!,
@@ -42,6 +42,8 @@ class SigninScreenViewModel extends AutoDisposeNotifier<SigninScreenState> {
           ? AsyncValue.data(result)
           : AsyncValue.error(result, StackTrace.current),
     );
+
+    return result == null;
   }
 }
 

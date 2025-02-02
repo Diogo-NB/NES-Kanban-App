@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_debouncer/flutter_debouncer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nes_kanban_app/features/auth/presentation/signin_viewmodel.dart';
+import 'package:go_router/go_router.dart';
+import 'package:nes_kanban_app/features/auth/presentation/signin/signin_viewmodel.dart';
 import 'package:nes_ui/nes_ui.dart';
 
 class SigninScreen extends ConsumerWidget {
@@ -116,9 +117,12 @@ class SigninScreen extends ConsumerWidget {
                               if (formKey.currentState!.validate()) {
                                 debouncer.debounce(
                                   duration: Durations.medium2,
-                                  onDebounce: () {
+                                  onDebounce: () async {
                                     formKey.currentState!.save();
-                                    viewModel.submit();
+                                    final result = await viewModel.submit();
+                                    if (result && context.mounted) {
+                                      context.go('/home');
+                                    }
                                   },
                                 );
                               } else {
