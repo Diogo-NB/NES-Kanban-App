@@ -33,10 +33,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(
-      vsync: this,
-      length: myTabs.length,
-    );
+    _tabController = TabController(vsync: this, length: myTabs.length);
   }
 
   @override
@@ -53,16 +50,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           controller: _tabController,
           tabs: myTabs,
         ),
+        title: const Text('NES Kanban'),
         actions: [
           IconButton(
-            icon: NesIcon(iconData: NesIcons.close),
-            onPressed: () async {
-              await ref.read(authRepositoryProvider).signout();
-              if (context.mounted) {
-                context.go('/signin');
-              }
+            icon: Icon(Icons.exit_to_app_rounded),
+            iconSize: 28,
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  content: const Text('Are you sure you want to sign out?'),
+                  actions: [
+                    TextButton(
+                      onPressed: context.pop,
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        await ref.read(authRepositoryProvider).signout();
+                        if (context.mounted) {
+                          context.replace('/auth');
+                        }
+                      },
+                      child: const Text('Sign out'),
+                    ),
+                  ],
+                ),
+              );
             },
-          ),
+          )
         ],
       ),
       body: TabBarView(

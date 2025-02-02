@@ -26,14 +26,38 @@ class AuthRepository {
       final token = await _service.getToken();
 
       if (token == null) {
-        throw Exception('Failed to get token');
+        throw Exception('Failed to get token after signin');
       }
 
       return null;
     } on FirebaseAuthException catch (e) {
       return _handleAuthError(e);
     } catch (e) {
-      return 'Authentication failed. Please try again.';
+      return 'Failed to signin. Please try again.';
+    }
+  }
+
+  Future<String?> signup({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      await _service.signup(
+        email: email,
+        password: password,
+      );
+
+      final token = await _service.getToken();
+
+      if (token == null) {
+        throw Exception('Failed to get token after signup');
+      }
+
+      return null;
+    } on FirebaseAuthException catch (e) {
+      return _handleAuthError(e);
+    } catch (e) {
+      return 'Failed to signup. Please try again.';
     }
   }
 
@@ -54,7 +78,11 @@ String _handleAuthError(FirebaseAuthException e) {
       return 'This account has been disabled';
     case 'invalid-credential':
       return 'Invalid Email or Password';
+    case 'email-already-in-use':
+      return 'Email already in use';
+    case 'weak-password':
+      return 'Password is too weak';
     default:
-      return 'Authentication failed. Please try again.';
+      return 'An unexpected error occurred. Please try again.';
   }
 }

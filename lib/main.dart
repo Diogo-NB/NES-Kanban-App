@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nes_kanban_app/features/auth/domain/auth_provider.dart';
 import 'package:nes_kanban_app/features/auth/presentation/signin/signin_screen.dart';
+import 'package:nes_kanban_app/features/auth/presentation/signup/signup_screen.dart';
 import 'package:nes_kanban_app/features/home/presentation/home_screen.dart';
 import 'package:nes_ui/nes_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -53,17 +54,25 @@ class MyApp extends ConsumerWidget {
         routes: [
           GoRoute(
             path: '/',
-            builder: (context, state) => throw UnimplementedError(),
             redirect: (context, state) async {
               await ref.read(authProvider.notifier).refreshToken();
               if (ref.read(authProvider).isAuthenticated) {
                 return '/home';
               }
-              return '/signin';
+              return '/auth';
             },
           ),
+          GoRoute(
+            path: '/auth',
+            builder: (context, state) => SigninScreen(),
+            routes: [
+              GoRoute(
+                path: '/signup',
+                builder: (context, state) => SignUpScreen(),
+              ),
+            ],
+          ),
           GoRoute(path: '/home', builder: (context, state) => HomeScreen()),
-          GoRoute(path: '/signin', builder: (context, state) => SigninScreen())
         ],
       ),
     );

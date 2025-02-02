@@ -2,22 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_debouncer/flutter_debouncer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nes_kanban_app/features/auth/presentation/signin/signin_viewmodel.dart';
+import 'package:nes_kanban_app/features/auth/presentation/signup/signup_viewmodel.dart';
 import 'package:nes_ui/nes_ui.dart';
 
-class SigninScreen extends ConsumerWidget {
-  SigninScreen({super.key});
+class SignUpScreen extends ConsumerWidget {
+  SignUpScreen({super.key});
 
-  final formKey = GlobalKey<FormState>(debugLabel: 'signin_screen_form');
+  final formKey = GlobalKey<FormState>(debugLabel: 'signup_screen_form');
   final debouncer = Debouncer();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewModel = ref.read(signinScreenViewModel.notifier);
-    final state = ref.watch(signinScreenViewModel);
+    final viewModel = ref.read(signupScreenViewModel.notifier);
+    final state = ref.watch(signupScreenViewModel);
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      appBar: AppBar(),
       body: NesScaffold(
         body: SafeArea(
           child: SingleChildScrollView(
@@ -81,20 +82,35 @@ class SigninScreen extends ConsumerWidget {
                         },
                         onSaved: viewModel.savePassword,
                       ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () {},
-                          child: const Text(
-                            'Forgot password?',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
+                      const SizedBox(height: 20),
+                      TextFormField(
+                        autofillHints: const [AutofillHints.password],
+                        obscureText: !state.isPasswordVisible,
+                        keyboardType: state.isPasswordVisible
+                            ? TextInputType.visiblePassword
+                            : null,
+                        style: const TextStyle(fontSize: 12),
+                        decoration: InputDecoration(
+                          labelText: 'Confirm password',
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              state.isPasswordVisible
+                                  ? Icons.visibility_rounded
+                                  : Icons.visibility_off_rounded,
                             ),
+                            onPressed: viewModel.togglePasswordVisibility,
                           ),
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Re-enter your password';
+                          }
+                          return null;
+                        },
+                        onSaved: viewModel.saveConfirmPassword,
                       ),
-                      state.signinState.when(
+                      const SizedBox(height: 20),
+                      state.signupState.when(
                         data: (_) => const SizedBox.shrink(),
                         loading: () => const NesTerminalLoadingIndicator(),
                         error: (e, s) => Text(
@@ -121,7 +137,7 @@ class SigninScreen extends ConsumerWidget {
                                     formKey.currentState!.save();
                                     final result = await viewModel.submit();
                                     if (result && context.mounted) {
-                                      context.go('/home');
+                                      context.replace('/home');
                                     }
                                   },
                                 );
@@ -129,36 +145,7 @@ class SigninScreen extends ConsumerWidget {
                                 debouncer.cancel();
                               }
                             },
-                            text: 'Sign in',
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                  ),
-                                  child: NesContainer(height: 3),
-                                ),
-                              ),
-                              const Text('or'),
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                  ),
-                                  child: NesContainer(height: 3),
-                                ),
-                              ),
-                            ],
-                          ),
-                          NesButton.text(
-                            type: NesButtonType.normal,
-                            text: 'Create an account',
-                            onPressed: () {
-                              context.push('/auth/signup');
-                            },
+                            text: 'Create account',
                           ),
                         ],
                       ),
