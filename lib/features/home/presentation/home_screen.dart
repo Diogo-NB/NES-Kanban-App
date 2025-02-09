@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nes_kanban_app/features/auth/domain/auth_repository.dart';
-import 'package:nes_kanban_app/features/home/presentation/components/tasks_list.dart';
+import 'package:nes_kanban_app/features/home/presentation/components/home_tab.dart';
+import 'package:nes_kanban_app/features/tasks/presentation/tasks_list.dart';
+import 'package:nes_kanban_app/features/home/presentation/home_screen_view_model.dart';
 import 'package:nes_ui/nes_ui.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -12,45 +14,43 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen>
-    with SingleTickerProviderStateMixin {
-  final List<Tab> myTabs = [
-    Tab(
-      text: 'TODO',
-      icon: NesIcon(iconData: NesIcons.textFile),
-    ),
-    Tab(
-      text: 'DOING',
-      icon: NesIcon(iconData: NesIcons.play),
-    ),
-    Tab(
-      text: 'DONE',
-      icon: NesIcon(iconData: NesIcons.check),
-    ),
-  ];
-
-  late final TabController _tabController;
+    with TickerProviderStateMixin {
+  late final viewModel = ref.watch(homeScreenViewModelProvider.notifier);
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: myTabs.length);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      viewModel.fetchTabs();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final tabs = ref.watch(homeScreenViewModelProvider.select((s) => s.tabs));
+
+    final tabController = TabController(
+      length: tabs.valueOrNull?.length ?? 0,
+      vsync: this,
+    );
+
+    tabController.addListener(() {
+      viewModel.setCurrentTabIndex(tabController.index);
+    });
+
     return Scaffold(
       appBar: AppBar(
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: myTabs,
-        ),
         title: const Text('NES Kanban'),
+        bottom: tabs.whenOrNull(
+          skipError: true,
+          data: (tabs) {
+            return TabBar(
+              isScrollable: tabs.length > 4,
+              controller: tabController,
+              tabs: tabs.map(HomeTab.new).toList(),
+            );
+          },
+        ),
         actions: [
           IconButton(
             icon: Icon(Icons.exit_to_app_rounded),
@@ -78,12 +78,37 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 ),
               );
             },
-          )
+          ),
         ],
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: myTabs.map((Tab tab) => TasksList()).toList(),
+      body: tabs.when(
+        loading: () => const Center(child: NesHourglassLoadingIndicator()),
+        error: (error, stackTrace) => Center(
+          child: Text('An unexpected error occurred, please try again later.'),
+        ),
+        data: (tabs) {
+          if (tabs.isEmpty) {
+            return Center(
+              child: NesButton.iconText(
+                type: NesButtonType.normal,
+                icon: NesIcons.add,
+                text: 'Created a new tab!',
+                onPressed: () {
+                  viewModel.createTab();
+                },
+              ),
+            );
+          }
+
+          return Consumer(
+            builder: (context, ref, child) {
+              final currentTabId = ref.watch(
+                homeScreenViewModelProvider.select((s) => s.currentTabId),
+              );
+              return TasksList(tabId: currentTabId);
+            },
+          );
+        },
       ),
     );
   }

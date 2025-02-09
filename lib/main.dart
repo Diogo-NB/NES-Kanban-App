@@ -34,8 +34,6 @@ void main() async {
   );
 }
 
-final navigatorKey = GlobalKey<NavigatorState>();
-
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
@@ -49,7 +47,6 @@ class MyApp extends ConsumerWidget {
         ),
       ),
       routerConfig: GoRouter(
-        navigatorKey: navigatorKey,
         initialLocation: '/',
         routes: [
           GoRoute(

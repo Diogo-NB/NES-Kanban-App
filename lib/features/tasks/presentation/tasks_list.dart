@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nes_ui/nes_ui.dart';
 
 class TasksList extends ConsumerStatefulWidget {
-  const TasksList({super.key});
+  final String tabId;
+  const TasksList({super.key, required this.tabId});
 
   @override
   ConsumerState createState() => _TasksListState();
