@@ -15,6 +15,8 @@ enum TabIconEnum {
   @JsonValue('chest')
   chest;
 
+  static const defaultTabIcon = TabIconEnum.saveFile;
+
   NesIconData get iconData {
     switch (this) {
       case TabIconEnum.play:

@@ -11,7 +11,7 @@ class TabModel with _$TabModel {
   factory TabModel({
     required String id,
     required String title,
-    @Default(TabIconEnum.saveFile) TabIconEnum icon,
+    @Default(TabIconEnum.defaultTabIcon) TabIconEnum icon,
     @Default(0) int order,
   }) = _TabModel;
 
