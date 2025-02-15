@@ -10,7 +10,6 @@ class HomeScreenState with _$HomeScreenState {
 
   const factory HomeScreenState({
     @Default(AsyncLoading()) AsyncValue<List<TabModel>> tabs,
-    @Default(AsyncLoading()) AsyncValue<List<TabModel>> tasks,
     @Default(0) int currentTabIndex,
   }) = _HomeScreenState;
 

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nes_kanban_app/features/auth/domain/auth_repository.dart';
 import 'package:nes_kanban_app/features/home/presentation/components/home_tab.dart';
+import 'package:nes_kanban_app/features/tasks/presentation/create_task_fab.dart';
 import 'package:nes_kanban_app/features/tasks/presentation/tasks_list.dart';
 import 'package:nes_kanban_app/features/home/presentation/home_screen_view_model.dart';
 import 'package:nes_ui/nes_ui.dart';
@@ -29,8 +30,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   Widget build(BuildContext context) {
     final tabs = ref.watch(homeScreenViewModelProvider.select((s) => s.tabs));
 
+    final tabsLength = tabs.valueOrNull?.length ?? 0;
+
     final tabController = TabController(
-      length: tabs.valueOrNull?.length ?? 0,
+      length: tabsLength,
       vsync: this,
     );
 
@@ -39,6 +42,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     });
 
     return Scaffold(
+      floatingActionButton: tabsLength > 0
+          ? Consumer(builder: (context, ref, _) {
+              final currentTabId = ref.watch(
+                homeScreenViewModelProvider.select((s) => s.currentTabId),
+              );
+              return CreateTaskFab(tabId: currentTabId);
+            })
+          : null,
       appBar: AppBar(
         title: const Text('NES Kanban'),
         bottom: tabs.whenOrNull(
@@ -101,11 +112,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           }
 
           return Consumer(
-            builder: (context, ref, child) {
+            builder: (context, ref, _) {
               final currentTabId = ref.watch(
                 homeScreenViewModelProvider.select((s) => s.currentTabId),
               );
-              return TasksList(tabId: currentTabId);
+              return TasksList(
+                tabId: currentTabId,
+                key: ValueKey(currentTabId),
+              );
             },
           );
         },

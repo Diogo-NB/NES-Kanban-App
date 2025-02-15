@@ -15,20 +15,12 @@ class TabRepository {
   TabRepository({required TabService service}) : _service = service;
 
   Future<List<TabModel>> getAll() async {
-    final response = await _service.findAll();
-    if (response.isSuccessful) {
-      return response.body ?? [];
-    } else {
-      throw Exception(response.error);
-    }
+    final res = await _service.findAll();
+    return res.bodyOrThrow;
   }
 
   Future<TabModel> create(String title) async {
-    final response = await _service.createNew(CreateTabDto(title: title));
-    if (response.isSuccessful) {
-      return response.body!;
-    } else {
-      throw Exception(response.error);
-    }
+    final res = await _service.createNew(CreateTabDto(title: title));
+    return res.bodyOrThrow;
   }
 }
